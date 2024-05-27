@@ -23,7 +23,7 @@ const groupSchema = new Schema({
         enum: ["Private", "Public"],
         default: "Public"
     },
-    approvedUsera: [Schema.Types.ObjectId],
+    approvedUsers: [{userId:Schema.Types.ObjectId, approvedAt:Date}],
     joiningFee:{
         type:Number,
         default:0
