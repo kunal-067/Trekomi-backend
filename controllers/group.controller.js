@@ -8,6 +8,18 @@ const {
 } = require("../utils/api.utils");
 
 //user actions
+const getGroups = asyncHandler(async (req, res)=>{
+    const {userId, role} = req.data;
+    const _id = req.params._id;
+    const {size, page} = req.query;
+    let groups;
+    if((_id && _id == userId) || role == "Admin"){
+        groups = await Group.find({admin: _id})
+    }
+    groups  = await Group.aggregate([{$sample:{size: size || 20}}, {$skip: (page || 0)*(size || 20)}])
+
+    return res.json(new ApiResponse(200, "Groups fetched successfullly !", groups))
+})
 const joinGroup = asyncHandler(async (req, res) => {
     const {
         userId
@@ -85,7 +97,7 @@ const approveUser = asyncHandler(async (req,res)=>{
     } = req.body;
     const {user,group} = await Promise.all([User.findById(userId), Group.findById(groupId)]);
 
-    if (!user || !user.isGroupAdmin(groupId) || !user.isAdmin) {
+    if (!user || (!user.isGroupAdmin(groupId) && !user.isAdmin)) {
         return res.status(400).json(new ApiError(400, "Invalid attempt ! you don't have right to do this"));
     };
 
@@ -104,7 +116,7 @@ const deleteGroup = asyncHandler(async (req, res) => {
     } = req.body;
     const user = await User.findById(userId);
 
-    if (!user || !user.isGroupAdmin(groupId) || !user.isAdmin) {
+    if (!user || (!user.isGroupAdmin(groupId) && !user.isAdmin)) {
         return res.status(400).json(new ApiError(400, "Invalid attempt ! you don't have right to do this"));
     }
 
@@ -114,7 +126,7 @@ const deleteGroup = asyncHandler(async (req, res) => {
 });
 
 const groupController = {
-    joinGroup,createGroup,updateGroup,approveUser,deleteGroup
+    getGroups,joinGroup,createGroup,updateGroup,approveUser,deleteGroup
 };
 
 module.exports = groupController;

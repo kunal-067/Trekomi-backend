@@ -4,7 +4,7 @@
   "description": "This project is made for the backend api's of trekomi which is a social media type app",
   "main": "server.js",
   "scripts": {
-    "test": "dev",
+    "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "keywords": [
