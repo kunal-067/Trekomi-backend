@@ -16,6 +16,7 @@ const groupSchema = new Schema({
     },
     admin: {
         type: Schema.Types.ObjectId,
+        ref:"User",
         required: true
     },
     type: {
@@ -23,7 +24,7 @@ const groupSchema = new Schema({
         enum: ["Private", "Public"],
         default: "Public"
     },
-    approvedUsers: [{userId:Schema.Types.ObjectId, approvedAt:Date}],
+    approvedUsers: [{userId:{type:Schema.Types.ObjectId, ref:"User", required:true}, approvedAt:Date}],
     joiningFee:{
         type:Number,
         default:0
